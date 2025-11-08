@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gravity Jump</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="app">
+    <header class="app__header">
+      <h1>Gravity Jump</h1>
+      <p class="tagline">Explore how different worlds change the way you move!</p>
+    </header>
+
+    <section class="controls">
+      <label class="control">
+        <span>Select a world</span>
+        <select id="planet-select">
+          <option value="earth">Earth</option>
+          <option value="moon">Moon</option>
+          <option value="mars">Mars</option>
+          <option value="jupiter">Jupiter</option>
+          <option value="saturn">Saturn</option>
+        </select>
+      </label>
+
+      <label class="control">
+        <span>Your mass (kg)</span>
+        <input type="number" id="mass-input" min="1" value="70" />
+      </label>
+
+      <div class="readout" id="weight-readout">
+        Weight on Earth: <strong>686.7 N</strong>
+      </div>
+    </section>
+
+    <section class="world world--earth" id="world">
+      <div class="world__sky" id="world-sky">
+        <div class="sky-decoration sky-decoration--stars" aria-hidden="true"></div>
+        <div class="sky-decoration sky-decoration--aurora" aria-hidden="true"></div>
+        <div class="sky-decoration sky-decoration--rings" aria-hidden="true"></div>
+      </div>
+      <div class="world__ground" id="world-ground">
+        <div class="world__terrain" aria-hidden="true">
+          <div class="terrain terrain--left"></div>
+          <div class="terrain terrain--center"></div>
+          <div class="terrain terrain--right"></div>
+        </div>
+        <div class="astronaut" id="astronaut" role="img" aria-label="Astronaut ready to jump">
+          <div class="astronaut__backpack"></div>
+          <div class="astronaut__helmet">
+            <div class="astronaut__visor">
+              <span class="astronaut__glint"></span>
+            </div>
+            <div class="astronaut__antenna"></div>
+          </div>
+          <div class="astronaut__body">
+            <div class="astronaut__panel"></div>
+            <div class="astronaut__belt"></div>
+          </div>
+          <div class="astronaut__arm astronaut__arm--left">
+            <div class="astronaut__glove"></div>
+          </div>
+          <div class="astronaut__arm astronaut__arm--right">
+            <div class="astronaut__glove"></div>
+          </div>
+          <div class="astronaut__leg astronaut__leg--left">
+            <div class="astronaut__boot"></div>
+          </div>
+          <div class="astronaut__leg astronaut__leg--right">
+            <div class="astronaut__boot"></div>
+          </div>
+        </div>
+        <div class="shadow" id="shadow"></div>
+      </div>
+    </section>
+
+    <section class="info">
+      <h2>How it works</h2>
+      <p>
+        Weight changes with gravity. Enter your mass, choose a planet, then press the
+        <kbd>Spacebar</kbd> to launch the astronaut. Lower gravity means slower falling and a higher
+        jump!
+      </p>
+      <dl class="facts" id="planet-facts"></dl>
+    </section>
+  </main>
+
+  <footer class="app__footer">
+    <small>
+      Weight is calculated with <strong>W = m × g</strong>. Mass stays the same, but gravity (g) is
+      different on each planet.
+    </small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

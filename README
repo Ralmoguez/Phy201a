@@ -1,1 +1,19 @@
+# Gravity Jump Simulation
+
+## Testing / Running Locally
+
+1. Make sure you have a web browser (Chrome, Firefox, Edge, or Safari).
+2. From the project root, start a simple HTTP server:
+   ```bash
+   python3 -m http.server 8000
+   ```
+3. Open your browser and navigate to [http://localhost:8000/index.html](http://localhost:8000/index.html).
+4. Interact with the planet selector, enter a mass value, and press the spacebar to trigger jumps. Observe how the jump height and weight display respond to the selected planet.
+
+### Alternative: Open Directly
+You can also double-click `index.html` to open the file directly in your browser. Some browsers block local file access for audio or advanced features, so use the local server approach above if anything appears missing.
+
+## Tips
+- Use the on-page reset button to return to Earth quickly if you want to compare different planets back-to-back.
+- Adjust the mass input to see how weight scales while the jump animation still depends on gravity.
 
