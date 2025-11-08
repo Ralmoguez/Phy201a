@@ -1,0 +1,241 @@
+:root {
+  color-scheme: dark light;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  --text: #f4f7ff;
+  --muted: #cad4f3;
+  --panel: rgba(16, 22, 46, 0.7);
+  --border: rgba(255, 255, 255, 0.15);
+  --shadow: rgba(0, 0, 0, 0.4);
+  --earth-sky: linear-gradient(180deg, #0a3d62, #82ccdd 65%, #f7f1e3);
+  --earth-ground: #3c6382;
+  --moon-sky: linear-gradient(180deg, #171f3c, #3e4668 70%, #a7adba);
+  --moon-ground: #8f9bb3;
+  --mars-sky: linear-gradient(180deg, #3b180a, #a33b20 65%, #f6b78f);
+  --mars-ground: #c44536;
+  --jupiter-sky: linear-gradient(180deg, #1b1e4b, #5e63b6 50%, #f6d365 85%, #fda085);
+  --jupiter-ground: #d08752;
+  --saturn-sky: linear-gradient(180deg, #1b1e2f, #4b3f72 55%, #c6b8de 80%, #f9e3a2);
+  --saturn-ground: #b59f6b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background: radial-gradient(circle at top, #1b1e4b, #05060f 65%);
+  color: var(--text);
+  text-align: center;
+}
+
+.app {
+  width: min(960px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem 0 4rem;
+}
+
+.app__header h1 {
+  font-size: clamp(2.8rem, 5vw, 4.2rem);
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+.tagline {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1rem 2rem var(--shadow);
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 1.05rem;
+}
+
+.control span {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+select,
+input[type='number'] {
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  appearance: none;
+}
+
+select:focus,
+input[type='number']:focus {
+  outline: 2px solid rgba(130, 204, 221, 0.9);
+  outline-offset: 2px;
+}
+
+.readout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(10, 17, 32, 0.6);
+  border-radius: 12px;
+  padding: 0.75rem;
+  font-size: 1.2rem;
+}
+
+.world {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.world__sky {
+  height: 260px;
+  transition: background 0.6s ease;
+}
+
+.world__ground {
+  position: relative;
+  background: var(--earth-ground);
+  min-height: 180px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 3rem;
+  transition: background 0.6s ease;
+}
+
+.astronaut {
+  position: relative;
+  width: 80px;
+  height: 120px;
+  border-radius: 40px 40px 18px 18px;
+  background: linear-gradient(180deg, #f5f5f5 0%, #e1e7ef 40%, #bac6d8 100%);
+  box-shadow: inset 0 -10px 18px rgba(0, 0, 0, 0.15), 0 20px 25px rgba(0, 0, 0, 0.3);
+  transform: translateY(0);
+  transition: filter 0.3s ease;
+}
+
+.astronaut::before {
+  content: '';
+  position: absolute;
+  top: -42px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #ffffff 25%, #9fb4cf 65%, #6f7d8f 100%);
+  border: 4px solid rgba(255, 255, 255, 0.7);
+}
+
+.astronaut::after {
+  content: '';
+  position: absolute;
+  inset: 40px 8px auto;
+  height: 14px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(48, 128, 237, 0.9), rgba(162, 210, 255, 0.9));
+  box-shadow: 0 0 12px rgba(48, 128, 237, 0.6);
+}
+
+.shadow {
+  position: absolute;
+  bottom: 30px;
+  width: 100px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  filter: blur(6px);
+  transform: scale(1);
+  transition: transform 0.2s ease;
+}
+
+.info {
+  background: rgba(8, 14, 32, 0.65);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.info h2 {
+  margin-top: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+kbd {
+  display: inline-block;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+}
+
+.facts {
+  margin: 1rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.facts dt {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.facts dd {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+.app__footer {
+  margin-bottom: 1.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 600px) {
+  .world__sky {
+    height: 200px;
+  }
+
+  .world__ground {
+    min-height: 150px;
+  }
+
+  .astronaut {
+    width: 64px;
+    height: 96px;
+  }
+}
