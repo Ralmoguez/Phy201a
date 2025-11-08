@@ -1,0 +1,602 @@
+:root {
+  color-scheme: dark light;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  --text: #f4f7ff;
+  --muted: #cad4f3;
+  --panel: rgba(16, 22, 46, 0.7);
+  --border: rgba(255, 255, 255, 0.15);
+  --shadow: rgba(0, 0, 0, 0.4);
+  --earth-sky: linear-gradient(180deg, #0a3d62, #82ccdd 65%, #f7f1e3);
+  --earth-ground: #3c6382;
+  --moon-sky: linear-gradient(180deg, #171f3c, #3e4668 70%, #a7adba);
+  --moon-ground: #8f9bb3;
+  --mars-sky: linear-gradient(180deg, #3b180a, #a33b20 65%, #f6b78f);
+  --mars-ground: #c44536;
+  --jupiter-sky: linear-gradient(180deg, #1b1e4b, #5e63b6 50%, #f6d365 85%, #fda085);
+  --jupiter-ground: #d08752;
+  --saturn-sky: linear-gradient(180deg, #1b1e2f, #4b3f72 55%, #c6b8de 80%, #f9e3a2);
+  --saturn-ground: #b59f6b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background: radial-gradient(circle at top, #1b1e4b, #05060f 65%);
+  color: var(--text);
+  text-align: center;
+}
+
+.app {
+  width: min(960px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem 0 4rem;
+}
+
+.app__header h1 {
+  font-size: clamp(2.8rem, 5vw, 4.2rem);
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+.tagline {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1rem 2rem var(--shadow);
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 1.05rem;
+}
+
+.control span {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+select,
+input[type='number'] {
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  appearance: none;
+}
+
+select:focus,
+input[type='number']:focus {
+  outline: 2px solid rgba(130, 204, 221, 0.9);
+  outline-offset: 2px;
+}
+
+.readout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(10, 17, 32, 0.6);
+  border-radius: 12px;
+  padding: 0.75rem;
+  font-size: 1.2rem;
+}
+
+.world {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background 0.6s ease;
+}
+
+.world__sky {
+  position: relative;
+  height: 260px;
+  background: var(--earth-sky);
+  overflow: hidden;
+  transition: background 0.6s ease;
+}
+
+.sky-decoration {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.sky-decoration--stars {
+  background-image: radial-gradient(#fff 1px, transparent 1px);
+  background-size: 80px 80px;
+  mix-blend-mode: screen;
+  opacity: 0.15;
+}
+
+.sky-decoration--aurora {
+  background: radial-gradient(circle at 30% 20%, rgba(120, 220, 255, 0.35), transparent 55%),
+    radial-gradient(circle at 70% 15%, rgba(255, 215, 175, 0.2), transparent 45%);
+  filter: blur(1px);
+}
+
+.sky-decoration--rings {
+  background:
+    radial-gradient(ellipse at 50% 85%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 55%),
+    radial-gradient(ellipse at 50% 95%, rgba(255, 239, 195, 0.6) 10%, rgba(255, 239, 195, 0) 60%);
+  transform: rotate(-8deg) scale(1.2);
+  filter: blur(1px);
+}
+
+.world__ground {
+  position: relative;
+  background: var(--earth-ground);
+  min-height: 180px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 3rem;
+  overflow: hidden;
+  transition: background 0.6s ease;
+}
+
+.world__terrain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.terrain {
+  position: absolute;
+  bottom: -10px;
+  width: 180px;
+  height: 140px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  filter: blur(0.5px);
+  opacity: 0.6;
+  transform: scale(1);
+  transition: background 0.6s ease, opacity 0.6s ease, transform 0.6s ease;
+}
+
+.terrain--left {
+  left: -40px;
+}
+
+.terrain--center {
+  left: 50%;
+  transform: translateX(-50%) scale(1.15);
+}
+
+.terrain--right {
+  right: -40px;
+}
+
+.astronaut {
+  position: relative;
+  width: 96px;
+  height: 150px;
+  transform: translate3d(0, 0, 0);
+  transition: filter 0.3s ease;
+  will-change: transform, filter;
+  z-index: 1;
+}
+
+.astronaut__helmet {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  width: 110px;
+  height: 110px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #fdfdfd 0%, #dde5f3 60%, #b2c1d6 100%);
+  border-radius: 50%;
+  box-shadow: inset 0 -14px 25px rgba(50, 68, 92, 0.35), 0 10px 20px rgba(0, 0, 0, 0.35);
+  border: 4px solid rgba(255, 255, 255, 0.7);
+}
+
+.astronaut__visor {
+  position: absolute;
+  inset: 18px 16px;
+  border-radius: 48% 48% 52% 52%;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.35), rgba(40, 60, 95, 0.95));
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+}
+
+.astronaut__glint {
+  position: absolute;
+  top: 18%;
+  left: 22%;
+  width: 45%;
+  height: 20%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  filter: blur(1px);
+  animation: visor-glint 4s ease-in-out infinite;
+}
+
+.astronaut__antenna {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  width: 6px;
+  height: 26px;
+  transform: translateX(-50%);
+  border-radius: 4px;
+  background: linear-gradient(180deg, #a5b6d0, #6f7f94);
+}
+
+.astronaut__antenna::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, 0);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff, #e6f0ff 75%, #91a0b4 100%);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+.astronaut__backpack {
+  position: absolute;
+  top: 54px;
+  left: 50%;
+  width: 78px;
+  height: 94px;
+  transform: translateX(-50%);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #d9e2f0, #8f9fb7);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.15);
+  z-index: -1;
+}
+
+.astronaut__body {
+  position: absolute;
+  bottom: 46px;
+  left: 50%;
+  width: 86px;
+  height: 110px;
+  transform: translateX(-50%);
+  border-radius: 38px 38px 26px 26px;
+  background: linear-gradient(180deg, #fdfdfd 0%, #e3eaf5 55%, #c1ccd9 100%);
+  box-shadow: inset 0 -18px 28px rgba(0, 0, 0, 0.18);
+}
+
+.astronaut__panel {
+  position: absolute;
+  top: 36px;
+  left: 50%;
+  width: 48px;
+  height: 26px;
+  transform: translateX(-50%);
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(40, 124, 223, 0.9), rgba(127, 209, 255, 0.9));
+  box-shadow: 0 0 12px rgba(40, 124, 223, 0.55);
+}
+
+.astronaut__belt {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+  height: 14px;
+  background: linear-gradient(90deg, #fd4d3f, #f5a623);
+  box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.25);
+}
+
+.astronaut__arm {
+  position: absolute;
+  top: 58px;
+  width: 32px;
+  height: 78px;
+  background: linear-gradient(180deg, #f1f4fb 0%, #cfd9eb 100%);
+  border-radius: 30px;
+  box-shadow: inset 0 -12px 18px rgba(0, 0, 0, 0.12);
+  transform-origin: top center;
+  transition: transform 0.4s ease;
+}
+
+.astronaut__arm--left {
+  left: 0;
+  transform: rotate(12deg);
+}
+
+.astronaut__arm--right {
+  right: 0;
+  transform: rotate(-12deg);
+}
+
+.astronaut__glove {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  width: 34px;
+  height: 26px;
+  transform: translateX(-50%);
+  border-radius: 16px 16px 12px 12px;
+  background: linear-gradient(180deg, #9aa9bf, #5c6f87);
+  box-shadow: inset 0 -6px 10px rgba(0, 0, 0, 0.25);
+}
+
+.astronaut__leg {
+  position: absolute;
+  bottom: 0;
+  width: 34px;
+  height: 78px;
+  background: linear-gradient(180deg, #f3f6fb 0%, #d2d9e7 100%);
+  border-radius: 22px;
+  transform-origin: top center;
+  transition: transform 0.4s ease;
+}
+
+.astronaut__leg--left {
+  left: 16px;
+  transform: rotate(4deg);
+}
+
+.astronaut__leg--right {
+  right: 16px;
+  transform: rotate(-4deg);
+}
+
+.astronaut__boot {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  width: 50px;
+  height: 28px;
+  transform: translateX(-50%);
+  border-radius: 18px 18px 12px 12px;
+  background: linear-gradient(180deg, #4b5c74, #2a3445);
+  box-shadow: inset 0 -6px 10px rgba(0, 0, 0, 0.35);
+}
+
+.astronaut--jumping .astronaut__arm--left {
+  transform: rotate(-12deg) translateY(-6px);
+}
+
+.astronaut--jumping .astronaut__arm--right {
+  transform: rotate(18deg) translateY(-6px);
+}
+
+.astronaut--jumping .astronaut__leg--left {
+  transform: rotate(14deg);
+}
+
+.astronaut--jumping .astronaut__leg--right {
+  transform: rotate(-18deg);
+}
+
+.shadow {
+  position: absolute;
+  bottom: 30px;
+  width: 110px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  filter: blur(7px);
+  transform: scale(1);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  will-change: transform, opacity;
+  z-index: 0;
+}
+
+.info {
+  background: rgba(8, 14, 32, 0.65);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.info h2 {
+  margin-top: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+kbd {
+  display: inline-block;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+}
+
+.facts {
+  margin: 1rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.facts dt {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.facts dd {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+@keyframes visor-glint {
+  0% {
+    transform: translate(-40%, -20%) rotate(14deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(70%, 15%) rotate(14deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-40%, -20%) rotate(14deg);
+    opacity: 0.2;
+  }
+}
+
+.world--earth .sky-decoration--aurora {
+  opacity: 0.55;
+}
+
+.world--earth .terrain--left {
+  background: radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.25), transparent 65%),
+    linear-gradient(180deg, rgba(80, 140, 170, 0.9), rgba(40, 92, 122, 0.9));
+  opacity: 0.75;
+}
+
+.world--earth .terrain--center {
+  background: linear-gradient(180deg, rgba(48, 110, 150, 0.95), rgba(34, 74, 104, 0.95));
+  opacity: 0.9;
+}
+
+.world--earth .terrain--right {
+  background: linear-gradient(180deg, rgba(62, 135, 170, 0.85), rgba(28, 70, 100, 0.95));
+}
+
+.world--moon .sky-decoration--stars {
+  opacity: 0.45;
+}
+
+.world--moon .terrain--left,
+.world--moon .terrain--right {
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.15), transparent 70%),
+    linear-gradient(180deg, rgba(180, 188, 205, 0.9), rgba(120, 128, 145, 0.9));
+  opacity: 0.7;
+}
+
+.world--moon .terrain--center {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(90, 94, 110, 0.85), rgba(160, 166, 184, 0.35) 60%, transparent 65%),
+    linear-gradient(180deg, rgba(148, 154, 170, 0.9), rgba(104, 110, 130, 0.9));
+  transform: translateX(-50%) scale(1.05);
+}
+
+.world--mars .sky-decoration--stars {
+  opacity: 0.25;
+}
+
+.world--mars .sky-decoration--aurora {
+  opacity: 0.35;
+  background: radial-gradient(circle at 20% 15%, rgba(255, 193, 120, 0.22), transparent 55%),
+    radial-gradient(circle at 70% 10%, rgba(255, 118, 76, 0.25), transparent 50%);
+}
+
+.world--mars .terrain--left {
+  background: linear-gradient(180deg, rgba(210, 96, 54, 0.9), rgba(128, 44, 22, 0.9));
+  opacity: 0.85;
+}
+
+.world--mars .terrain--center {
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 186, 120, 0.35), transparent 60%),
+    linear-gradient(180deg, rgba(196, 84, 44, 0.95), rgba(122, 36, 18, 0.9));
+  transform: translateX(-50%) scale(1.2);
+}
+
+.world--mars .terrain--right {
+  background: linear-gradient(180deg, rgba(170, 70, 32, 0.9), rgba(110, 34, 14, 0.95));
+}
+
+.world--jupiter .sky-decoration--stars {
+  opacity: 0.2;
+}
+
+.world--jupiter .sky-decoration--aurora {
+  opacity: 0.5;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 214, 153, 0.35), transparent 55%),
+    radial-gradient(circle at 70% 25%, rgba(255, 140, 92, 0.35), transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(125, 148, 255, 0.3), transparent 65%);
+}
+
+.world--jupiter .terrain--left,
+.world--jupiter .terrain--right {
+  background: linear-gradient(180deg, rgba(217, 158, 104, 0.85), rgba(158, 96, 52, 0.95));
+}
+
+.world--jupiter .terrain--center {
+  background:
+    radial-gradient(circle at 45% 40%, rgba(255, 180, 120, 0.35), transparent 65%),
+    linear-gradient(180deg, rgba(200, 130, 80, 0.95), rgba(130, 70, 36, 0.95));
+  transform: translateX(-50%) scale(1.05);
+}
+
+.world--saturn .sky-decoration--stars {
+  opacity: 0.3;
+}
+
+.world--saturn .sky-decoration--rings {
+  opacity: 0.7;
+}
+
+.world--saturn .sky-decoration--aurora {
+  opacity: 0.35;
+  background: radial-gradient(circle at 35% 18%, rgba(220, 200, 255, 0.3), transparent 55%),
+    radial-gradient(circle at 70% 22%, rgba(255, 227, 170, 0.25), transparent 50%);
+}
+
+.world--saturn .terrain--left,
+.world--saturn .terrain--right {
+  background: linear-gradient(180deg, rgba(210, 178, 120, 0.8), rgba(138, 110, 70, 0.92));
+}
+
+.world--saturn .terrain--center {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 235, 180, 0.3), transparent 60%),
+    linear-gradient(180deg, rgba(190, 160, 110, 0.92), rgba(120, 92, 56, 0.94));
+  transform: translateX(-50%) scale(1.1);
+}
+
+.app__footer {
+  margin-bottom: 1.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 600px) {
+  .world__sky {
+    height: 200px;
+  }
+
+  .world__ground {
+    min-height: 150px;
+  }
+
+  .astronaut {
+    width: 64px;
+    height: 96px;
+  }
+}
