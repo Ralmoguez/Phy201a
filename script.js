@@ -4,7 +4,6 @@ const PLANETS = {
     gravity: 9.81,
     skyVar: '--earth-sky',
     groundVar: '--earth-ground',
-    sceneClass: 'world--earth',
     description: 'The blue planet. Gravity keeps your feet firmly planted and your weight feels familiar.',
   },
   moon: {
@@ -12,7 +11,6 @@ const PLANETS = {
     gravity: 1.62,
     skyVar: '--moon-sky',
     groundVar: '--moon-ground',
-    sceneClass: 'world--moon',
     description: 'Only one-sixth of Earth gravity! Astronauts can bound across the dusty surface with ease.',
   },
   mars: {
@@ -20,7 +18,6 @@ const PLANETS = {
     gravity: 3.71,
     skyVar: '--mars-sky',
     groundVar: '--mars-ground',
-    sceneClass: 'world--mars',
     description: 'The red planet has just over one-third of Earth gravity — jumps feel floaty and long.',
   },
   jupiter: {
@@ -28,7 +25,6 @@ const PLANETS = {
     gravity: 24.79,
     skyVar: '--jupiter-sky',
     groundVar: '--jupiter-ground',
-    sceneClass: 'world--jupiter',
     description: 'A gas giant with crushing gravity. Jumping is a struggle and you feel incredibly heavy.',
   },
   saturn: {
@@ -36,21 +32,18 @@ const PLANETS = {
     gravity: 10.44,
     skyVar: '--saturn-sky',
     groundVar: '--saturn-ground',
-    sceneClass: 'world--saturn',
     description: 'Saturn is slightly stronger than Earth gravity, but still friendly enough for a decent hop.',
   },
 };
 
 const earthGravity = PLANETS.earth.gravity;
-const baseJumpHeight = 0.6; // meters on Earth ≈ athletic standing jump
-const maxHeightMultiplier = 3; // cap low-gravity hang time to ~3 s
+const baseJumpVelocity = 4.8; // meters per second on Earth ≈ 1.2 m jump height
 const pixelsPerMeter = 55;
 
 const planetSelect = document.getElementById('planet-select');
 const massInput = document.getElementById('mass-input');
 const weightReadout = document.getElementById('weight-readout');
 const factsList = document.getElementById('planet-facts');
-const world = document.getElementById('world');
 const worldSky = document.getElementById('world-sky');
 const worldGround = document.getElementById('world-ground');
 const astronaut = document.getElementById('astronaut');
@@ -73,9 +66,6 @@ function formatNewton(value) {
 }
 
 function updateBackground(planet) {
-  if (planet.sceneClass) {
-    world.className = `world ${planet.sceneClass}`;
-  }
   worldSky.style.background = `var(${planet.skyVar})`;
   worldGround.style.background = `var(${planet.groundVar})`;
 }
@@ -129,19 +119,15 @@ function resetJump() {
   state.jumping = false;
   astronaut.style.transform = 'translateY(0)';
   shadow.style.transform = 'scale(1)';
-  shadow.style.opacity = '1';
   astronaut.style.filter = 'brightness(1)';
-  astronaut.classList.remove('astronaut--jumping');
 }
 
 function startJump() {
   if (state.jumping) return;
   state.jumping = true;
   const gravity = state.planet.gravity;
-  const heightMultiplier = Math.min(maxHeightMultiplier, earthGravity / gravity);
-  const targetHeight = baseJumpHeight * heightMultiplier;
-  state.velocity = -Math.sqrt(2 * gravity * targetHeight);
-  astronaut.classList.add('astronaut--jumping');
+  const velocityScale = Math.sqrt(earthGravity / gravity);
+  state.velocity = -baseJumpVelocity * velocityScale;
 }
 
 let lastTimestamp = null;
@@ -162,12 +148,9 @@ function animate(timestamp) {
     } else {
       const heightMeters = -state.position;
       astronaut.style.transform = `translateY(${state.position * pixelsPerMeter}px)`;
-      const shadowScale = Math.max(0.5, 1 - heightMeters / 4);
-      const shadowOpacity = Math.max(0.45, 1 - heightMeters / 3);
+      const shadowScale = Math.max(0.55, 1 - heightMeters / 6);
       shadow.style.transform = `scale(${shadowScale.toFixed(2)})`;
-      shadow.style.opacity = shadowOpacity.toFixed(2);
-      const brightnessBoost = 1 + Math.min(heightMeters / 8, 0.35);
-      astronaut.style.filter = `brightness(${brightnessBoost.toFixed(2)})`;
+      astronaut.style.filter = `brightness(${1 + heightMeters / 10})`;
     }
   }
 
